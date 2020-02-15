@@ -1,4 +1,5 @@
 from flask import Flask, Blueprint
+from flask_restful import Api
 import sqlite3
 
 try:
@@ -58,5 +59,7 @@ def create_app(config_name):
 
     from app.landing import landing_bp
     app.register_blueprint(landing_bp)
+    from app.api import api_bp
+    app.register_blueprint(api_bp)
 
     return app
