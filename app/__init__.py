@@ -8,6 +8,7 @@ except ModuleNotFoundError as e:
   print('')
   print('ERROR: You forgot to make a copy of the "config-example.py" file called "config.py"')
   print('       Your application will NOT work until you do so.')
+  print('       (or maybe you tried to run __init__.py instead of myapp.py)')
   print('')
 
 """
@@ -43,7 +44,27 @@ def create_app(config_name):
     """
 
     app = Flask(__name__, static_url_path="/static")
-    print('this is the config name: {}'.format(config_name))
+    print(f'Using the {config_name} config.')
+    
+    db = sqlite3.connect(config[config_name].DB)
+    cur = db.cursor()
+    
+    try:
+        cur.executescript("""
+            CREATE TABLE IF NOT EXISTS flashcards (
+                id INTEGER PRIMARY KEY,
+                title TEXT,
+                description TEXT,
+                source TEXT,
+                image_url TEXT,
+                tags TEXT
+            );
+        """)
+        db.commit()
+        db.close()
+    except Exception as e:
+        print(e)
+        print("Database already exists!")
     
     # Select the desired config object from FLASK_ENV environment variable
     try:
